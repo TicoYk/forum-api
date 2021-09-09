@@ -4,6 +4,7 @@ import com.ticoyk.forumapi.app.auth.domain.Role;
 import com.ticoyk.forumapi.app.auth.domain.User;
 import com.ticoyk.forumapi.app.auth.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -18,6 +19,11 @@ public class UserResource {
 
     public UserResource(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<String> getUser(Authentication authentication) {
+        return ResponseEntity.ok().body(authentication.getName());
     }
 
     @GetMapping("/users")
