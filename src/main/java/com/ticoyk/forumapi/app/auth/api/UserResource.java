@@ -4,6 +4,7 @@ import com.ticoyk.forumapi.app.auth.domain.Role;
 import com.ticoyk.forumapi.app.auth.domain.User;
 import com.ticoyk.forumapi.app.auth.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,11 +23,14 @@ public class UserResource {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<String> getUser(Authentication authentication) {
-        return ResponseEntity.ok().body(authentication.getName());
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<User> getUser(Authentication authentication) {
+        User user = userService.getUser(authentication.getName());
+        return ResponseEntity.ok().body(user);
     }
 
     @GetMapping("/users")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
     }
