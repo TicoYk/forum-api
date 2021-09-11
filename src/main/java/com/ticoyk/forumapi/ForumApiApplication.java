@@ -1,17 +1,13 @@
 package com.ticoyk.forumapi;
 
-import com.ticoyk.forumapi.app.auth.domain.Role;
-import com.ticoyk.forumapi.app.auth.domain.User;
-import com.ticoyk.forumapi.app.auth.service.UserService;
+import com.ticoyk.forumapi.auth.user.Authority;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import com.ticoyk.forumapi.auth.user.User;
+import com.ticoyk.forumapi.auth.user.UserService;
 
 @SpringBootApplication
 public class ForumApiApplication {
@@ -20,20 +16,25 @@ public class ForumApiApplication {
 		SpringApplication.run(ForumApiApplication.class, args);
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(10);
-	}
+
 
 	@Bean
 	CommandLineRunner run(UserService userService) {
 		return args -> {
-			userService.saveRole(new Role(null, "ROLE_ADMIN"));
-			userService.saveRole(new Role(null, "ROLE_USER"));
-			userService.saveUser(new User(null, "Admin", "admin", "password", new HashSet<>()));
-			userService.saveUser(new User(null, "User", "user", "password", new HashSet<>()));
-			userService.addRoleToUser("admin", "ROLE_ADMIN");
-			userService.addRoleToUser("user", "ROLE_USER");
+			User appUser = new User();
+			appUser.setUsername("user");
+			appUser.setName("User");
+			appUser.setPassword("password");
+			appUser.setAuthority(Authority.APPUSER);
+
+			User admin = new User();
+			admin.setUsername("admin");
+			admin.setName("Admin");
+			admin.setPassword("password");
+			admin.setAuthority(Authority.ADMIN);
+
+			userService.saveUser(appUser);
+			userService.saveUser(admin);
 		};
 	}
 
