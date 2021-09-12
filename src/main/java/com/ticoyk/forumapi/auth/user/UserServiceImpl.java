@@ -1,6 +1,9 @@
 package com.ticoyk.forumapi.auth.user;
 
 import com.ticoyk.forumapi.auth.config.util.AuthUtil;
+import com.ticoyk.forumapi.auth.user.attributes.Authority;
+import com.ticoyk.forumapi.auth.user.attributes.title.Title;
+import com.ticoyk.forumapi.auth.user.attributes.title.TitleService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,11 +20,12 @@ import java.util.List;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
-
+    private final TitleService titleService;
     private final AuthUtil util;
 
-    public UserServiceImpl(UserRepository userRepository, AuthUtil util) {
+    public UserServiceImpl(UserRepository userRepository, TitleService titleService, AuthUtil util) {
         this.userRepository = userRepository;
+        this.titleService = titleService;
         this.util = util;
     }
 
@@ -34,11 +37,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void changeUserAuthority(String username, String authority) throws Exception {
-        if(isAuthorityNotValid(authority)) {
+        if (isAuthorityNotValid(authority)) {
             throw new Exception("Authority doesn't exist");
         }
         User user = getUser(username);
         user.setAuthority(Authority.valueOf(authority.toUpperCase()));
+    }
+
+    @Override
+    public void changeUserTitle(String username, String titleIdentifier) throws Exception {
+        if (isTitleNotValid(titleIdentifier)) {
+            throw new Exception("Title Identifier doesn't exist");
+        }
+        User user = getUser(username);
+        Title title = titleService.getTitle(titleIdentifier);
+        user.setTitle(title);
     }
 
     @Override
@@ -65,6 +78,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private boolean isAuthorityNotValid(String authority) {
         return !Authority.contains(authority);
+    }
+
+    private boolean isTitleNotValid(String identifier) {
+        return !titleService.isTitleValid(identifier);
     }
 
 }

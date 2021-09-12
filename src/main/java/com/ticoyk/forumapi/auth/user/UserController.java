@@ -37,7 +37,43 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/user/exchangeTitle")
+    @PreAuthorize("hasAuthority('admin')")
+    public ResponseEntity<?> exchangeUserAuthority(@RequestBody UserTitleForm form) throws Exception {
+        userService.changeUserTitle(form.getUsername(), form.getTitleIdentifier());
+        return ResponseEntity.ok().build();
+    }
+
+    static class UserTitleForm {
+
+        private String username;
+        private String titleIdentifier;
+
+        public UserTitleForm(String username, String titleIdentifier) {
+            this.username = username;
+            this.titleIdentifier = titleIdentifier;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getTitleIdentifier() {
+            return titleIdentifier;
+        }
+
+        public void setTitleIdentifier(String titleIdentifier) {
+            this.titleIdentifier = titleIdentifier;
+        }
+
+    }
+
     static class UserAuthorityForm {
+
         private String username;
         private String authority;
 

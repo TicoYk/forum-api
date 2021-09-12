@@ -1,10 +1,10 @@
-package com.ticoyk.forumapi.auth.user;
+package com.ticoyk.forumapi.auth.user.attributes;
 
 import java.util.Arrays;
 
 public enum Authority {
 
-    ADMIN("admin"), MANAGER("manager"), APPUSER("app_user");
+    ADMIN("admin"), MANAGER("manager"), APPUSER("app_user"), COMPANYUSER("company_user");
 
     private final String authority;
 

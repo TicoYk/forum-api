@@ -1,6 +1,6 @@
 package com.ticoyk.forumapi;
 
-import com.ticoyk.forumapi.auth.user.Authority;
+import com.ticoyk.forumapi.auth.user.attributes.Authority;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

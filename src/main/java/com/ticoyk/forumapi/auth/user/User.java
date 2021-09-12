@@ -1,6 +1,9 @@
 package com.ticoyk.forumapi.auth.user;
 
 
+import com.ticoyk.forumapi.auth.user.attributes.Authority;
+import com.ticoyk.forumapi.auth.user.attributes.title.Title;
+
 import javax.persistence.*;
 
 
@@ -15,6 +18,9 @@ public class User {
     private String password;
 
     private Authority authority = Authority.APPUSER;
+
+    @ManyToOne
+    private Title title;
 
     public User() {}
 
@@ -63,6 +69,14 @@ public class User {
 
     public void setAuthority(Authority authority) {
         this.authority = authority;
+    }
+
+    public Title getTitle() {
+        return title;
+    }
+
+    public void setTitle(Title title) {
+        this.title = title;
     }
 
 }
