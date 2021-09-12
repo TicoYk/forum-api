@@ -39,7 +39,7 @@ public class UserController {
 
     @PatchMapping("/user/exchangeTitle")
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<?> exchangeUserAuthority(@RequestBody UserTitleForm form) throws Exception {
+    public ResponseEntity<?> exchangeUserTitle(@RequestBody UserTitleForm form) throws Exception {
         userService.changeUserTitle(form.getUsername(), form.getTitleIdentifier());
         return ResponseEntity.ok().build();
     }
