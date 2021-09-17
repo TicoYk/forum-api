@@ -4,9 +4,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.auth0.jwt.algorithms.Algorithm;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class AuthUtil {

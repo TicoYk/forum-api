@@ -1,5 +1,6 @@
 package com.ticoyk.forumapi.auth.config.filter;
 
+import com.ticoyk.forumapi.auth.config.AuthExceptionHandler;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,6 +26,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Component
 public class AppAuthorizationFilter extends OncePerRequestFilter {
 
+    private final AuthExceptionHandler authExceptionHandler = new AuthExceptionHandler();
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if(request.getServletPath().equals("/api/login")) {
@@ -48,9 +51,7 @@ public class AppAuthorizationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     filterChain.doFilter(request, response);
                 } catch(Exception exception) {
-                    response.setHeader("error_message", exception.getMessage());
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    authExceptionHandler.addUnauthorizedToResponse(exception, response);
                 }
             } else {
                 filterChain.doFilter(request, response);

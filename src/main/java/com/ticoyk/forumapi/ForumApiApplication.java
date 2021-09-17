@@ -16,8 +16,6 @@ public class ForumApiApplication {
 		SpringApplication.run(ForumApiApplication.class, args);
 	}
 
-
-
 	@Bean
 	CommandLineRunner run(UserService userService) {
 		return args -> {
