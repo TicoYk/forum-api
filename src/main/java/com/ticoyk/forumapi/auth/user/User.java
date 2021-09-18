@@ -1,6 +1,7 @@
 package com.ticoyk.forumapi.auth.user;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ticoyk.forumapi.auth.user.attributes.Authority;
 import com.ticoyk.forumapi.auth.user.attributes.title.Title;
 
@@ -15,6 +16,8 @@ public class User {
     private Long id;
     private String name;
     private String username;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private Authority authority = Authority.APPUSER;

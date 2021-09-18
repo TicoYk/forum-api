@@ -1,8 +1,12 @@
 package com.ticoyk.forumapi.auth.config.filter;
 
 
+import com.google.gson.Gson;
 import com.ticoyk.forumapi.auth.config.AuthExceptionHandler;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,9 +49,9 @@ public class AppAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String password = "";
         if (request.getContentType().equals(MediaType.APPLICATION_JSON_VALUE)) {
             try {
-                Map<String, String> userJson = extractJsonUser(request);
-                username = userJson.get("username");
-                password = userJson.get("password");
+                LoginForm form = this.extractJsonUser(request);
+                username = form.getUsername();
+                password = form.getPassword();
             } catch(Exception exception) {
                 authExceptionHandler.addInputErrorToResponse(exception, response);
             }
@@ -89,26 +93,20 @@ public class AppAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 
-    public Map<String, String> extractJsonUser(HttpServletRequest request) throws Exception {
-        Map<String, String> userJson = new HashMap<>();
-        try (BufferedReader reader = request.getReader()) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.equals("{") || line.equals("}")) {
-                    continue;
-                }
-                line = line.replace(",", "");
-                line = line.replace("\"", "");
-                line = line.trim();
-                String property = line.substring(0, line.indexOf(":")).trim();
-                String value = line.substring(line.indexOf(":") + 1).trim();
-                userJson.put(property, value);
-            }
-        }
-        if (userJson.containsKey("username") && userJson.containsKey("password")) {
-            return userJson;
+    public LoginForm extractJsonUser(HttpServletRequest request) throws Exception {
+        String body = IOUtils.toString(request.getReader());
+        LoginForm form = new Gson().fromJson(body, LoginForm.class);
+        if (form.getUsername() != null && form.getPassword() != null) {
+            return form;
         }
         throw new Exception("Username and Password couldn't be parsed");
+    }
+
+    @Data
+    @AllArgsConstructor
+    protected static class LoginForm {
+        private String username;
+        private String password;
     }
 
 }
