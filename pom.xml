@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ticoyk</groupId>
-	<artifactId>forum-api</artifactId>
+	<artifactId>sqstudent-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>forum-api</name>
-	<description>Back-end API para o forúm</description>
+	<name>Share a Question Student - Api</name>
+	<description>Back-end API para o Share a Question Student</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
