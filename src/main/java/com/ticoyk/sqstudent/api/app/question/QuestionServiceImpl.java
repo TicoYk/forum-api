@@ -10,11 +10,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 @Transactional
+@Valid
 public class QuestionServiceImpl implements QuestionService {
 
     private UserService userService;
@@ -22,8 +24,9 @@ public class QuestionServiceImpl implements QuestionService {
     private QuestionUtil questionUtil;
 
     @Override
-    public Question saveQuestion(Question question, Authentication authentication) {
+    public Question saveQuestion(QuestionDTO questionDTO, Authentication authentication) {
         User user = this.userService.getUser(authentication.getName());
+        Question question = questionDTO.toQuestion();
         question.setUser(user);
         return questionRepository.save(question);
     }

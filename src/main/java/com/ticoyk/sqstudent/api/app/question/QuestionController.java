@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
@@ -26,8 +27,8 @@ public class QuestionController {
     }
 
     @PostMapping
-    public ResponseEntity<Question> saveQuestion(@RequestBody Question question, Authentication authentication) {
-        Question createdQuestion = this.questionService.saveQuestion(question, authentication);
+    public ResponseEntity<Question> saveQuestion(@RequestBody @Valid QuestionDTO questionDTO, Authentication authentication) {
+        Question createdQuestion = this.questionService.saveQuestion(questionDTO, authentication);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/").toUriString());
         return ResponseEntity.created(uri).body(createdQuestion);
     }
