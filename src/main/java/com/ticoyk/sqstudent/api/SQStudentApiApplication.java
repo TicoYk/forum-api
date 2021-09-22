@@ -20,7 +20,7 @@ public class SQStudentApiApplication {
 	CommandLineRunner run(UserService userService) {
 		return args -> {
 			User appUser = new User();
-			appUser.setUsername("user");
+			appUser.setUsername("user@email.com");
 			appUser.setName("User");
 			appUser.setPassword("password");
 			appUser.setAuthority(Authority.APPUSER);
