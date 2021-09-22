@@ -33,11 +33,12 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(util.passwordEncoder());
     }
-
+    
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         AppAuthenticationFilter authFilter = new AppAuthenticationFilter(authenticationManager(), util);
         authFilter.setFilterProcessesUrl("/login");
+        http.cors().disable();
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/api/login").permitAll();
