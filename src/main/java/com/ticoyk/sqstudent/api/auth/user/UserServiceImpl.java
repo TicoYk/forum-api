@@ -4,6 +4,7 @@ import com.ticoyk.sqstudent.api.auth.config.util.AuthUtil;
 import com.ticoyk.sqstudent.api.auth.user.attributes.Authority;
 import com.ticoyk.sqstudent.api.auth.user.attributes.title.Title;
 import com.ticoyk.sqstudent.api.auth.user.attributes.title.TitleService;
+import com.ticoyk.sqstudent.api.auth.user.dto.UserDTO;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,8 +31,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public User saveUser(UserDTO userDTO) {
+        User user = new User();
+        user.setName(userDTO.getName());
+        user.setUsername(userDTO.getUsername());
+        user.setPassword(util.passwordEncoder().encode(userDTO.getPassword()));
+        user.setAuthority(Authority.APPUSER);
+        return userRepository.save(user);
+    }
+
+    @Override
     public User saveUser(User user) {
-        user.setPassword(util.passwordEncoder().encode(user.getPassword()));
         return userRepository.save(user);
     }
 

@@ -7,7 +7,7 @@ public interface TitleService {
     List<Title> getTitles();
     Title getTitle(String identifier);
     Title updateTitleName(String name, String newName);
-    Title createTitle(String name);
+    Title saveTitle(TitleDTO titleDTO);
     boolean isTitleValid(String identifier);
 
 }

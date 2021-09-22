@@ -5,6 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -25,9 +26,10 @@ public class TitleController {
     }
 
     @PostMapping
-    public ResponseEntity<Title> createTitle(@RequestBody String name) {
+    @PreAuthorize("hasAuthority('admin') or hasAuthority('manager')")
+    public ResponseEntity<Title> createTitle(@RequestBody @Valid TitleDTO titleDTO) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/titles").toUriString());
-        return ResponseEntity.created(uri).body(titleService.createTitle(name));
+        return ResponseEntity.created(uri).body(titleService.saveTitle(titleDTO));
     }
 
     @PutMapping("/{identifier}")

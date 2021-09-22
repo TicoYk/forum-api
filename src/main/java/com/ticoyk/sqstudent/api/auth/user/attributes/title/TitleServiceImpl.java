@@ -36,9 +36,9 @@ public class TitleServiceImpl implements TitleService {
     }
 
     @Override
-    public Title createTitle(String name) {
+    public Title saveTitle(TitleDTO titleDTO) {
         Title title = new Title();
-        title.setName(name);
+        title.setName(title.getName());
         return titleRepository.save(title);
     }
 

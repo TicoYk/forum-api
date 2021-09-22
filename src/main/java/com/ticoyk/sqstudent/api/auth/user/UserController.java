@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticoyk.sqstudent.api.auth.config.AuthExceptionHandler;
 import com.ticoyk.sqstudent.api.auth.config.util.AuthUtil;
 
+import com.ticoyk.sqstudent.api.auth.user.dto.UserAuthorityDTO;
+import com.ticoyk.sqstudent.api.auth.user.dto.UserDTO;
+import com.ticoyk.sqstudent.api.auth.user.dto.UserTitleDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import java.net.URI;
 import java.util.*;
@@ -37,9 +41,9 @@ public class UserController {
     private AuthExceptionHandler authExceptionHandler;
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
+    public ResponseEntity<User> registerUser(@RequestBody @Valid UserDTO userDTO) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/login").toUriString());
-        return ResponseEntity.created(uri).body(this.userService.saveUser(user));
+        return ResponseEntity.created(uri).body(this.userService.saveUser(userDTO));
     }
 
     @GetMapping("/currentUser")
@@ -50,15 +54,15 @@ public class UserController {
 
     @PatchMapping("/user/exchangeAuthority")
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<?> exchangeUserAuthority(@RequestBody UserAuthorityForm form) throws Exception {
-        this.userService.changeUserAuthority(form.getUsername(), form.getAuthority());
+    public ResponseEntity<?> exchangeUserAuthority(@RequestBody UserAuthorityDTO dto) throws Exception {
+        this.userService.changeUserAuthority(dto.getUsername(), dto.getAuthority());
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/user/exchangeTitle")
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<?> exchangeUserTitle(@RequestBody UserTitleForm form) throws Exception {
-        this.userService.changeUserTitle(form.getUsername(), form.getTitleIdentifier());
+    public ResponseEntity<?> exchangeUserTitle(@RequestBody UserTitleDTO dto) throws Exception {
+        this.userService.changeUserTitle(dto.getUsername(), dto.getTitleIdentifier());
         return ResponseEntity.ok().build();
     }
 
@@ -90,24 +94,6 @@ public class UserController {
         } else {
             throw new RuntimeException("Refresh Token is Missing");
         }
-    }
-
-    @Data
-    @RequiredArgsConstructor
-    static class UserTitleForm {
-
-        private String username;
-        private String titleIdentifier;
-
-    }
-
-    @Data
-    @RequiredArgsConstructor
-    static class UserAuthorityForm {
-
-        private String username;
-        private String authority;
-
     }
 
 }

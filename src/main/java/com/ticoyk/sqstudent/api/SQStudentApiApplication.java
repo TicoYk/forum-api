@@ -2,6 +2,7 @@ package com.ticoyk.sqstudent.api;
 
 import com.ticoyk.sqstudent.api.auth.user.attributes.Authority;
 import com.ticoyk.sqstudent.api.auth.user.User;
+import com.ticoyk.sqstudent.api.auth.user.dto.UserDTO;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,20 +20,20 @@ public class SQStudentApiApplication {
 	@Bean
 	CommandLineRunner run(UserService userService) {
 		return args -> {
-			User appUser = new User();
+			UserDTO appUser = new UserDTO();
 			appUser.setUsername("user@email.com");
 			appUser.setName("User");
 			appUser.setPassword("password");
-			appUser.setAuthority(Authority.APPUSER);
 
-			User admin = new User();
-			admin.setUsername("admin");
+			UserDTO admin = new UserDTO();
+			admin.setUsername("admin@email.com");
 			admin.setName("Admin");
 			admin.setPassword("password");
-			admin.setAuthority(Authority.ADMIN);
 
 			userService.saveUser(appUser);
-			userService.saveUser(admin);
+			User user = userService.saveUser(admin);
+			user.setAuthority(Authority.ADMIN);
+			userService.saveUser(user);
 		};
 	}
 
