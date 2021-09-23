@@ -33,9 +33,17 @@ public class QuestionController {
         return ResponseEntity.created(uri).body(createdQuestion);
     }
 
+//    @PutMapping({"/{id}"})
+//    public ResponseEntity<Question> updateQuestion(@PathVariable Long id, @RequestBody @Valid QuestionDTO questionDTO) {
+//        Question createdQuestion = this.questionService.updateQuestion(id, questionDTO);
+//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/").toUriString());
+//        return ResponseEntity.created(uri).body(createdQuestion);
+//    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Question> findQuestionById(@PathVariable Long id) {
-        return ResponseEntity.ok(this.questionService.findQuestionById(id));
+        Question question = this.questionService.findQuestionById(id);
+        return ResponseEntity.ok(question);
     }
 
 }

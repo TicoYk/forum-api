@@ -1,21 +1,19 @@
 package com.ticoyk.sqstudent.api.app.question;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ticoyk.sqstudent.api.app.category.Category;
 import com.ticoyk.sqstudent.api.auth.user.User;
 import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class Question {
 
     @Id
@@ -25,10 +23,15 @@ public class Question {
     private String title;
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="user_id", referencedColumnName="id", nullable = false)
     @ToString.Exclude
-    @JsonIgnore
     private User user;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="category_id", referencedColumnName="id")
+    @ToString.Exclude
+    private Category category;
 
     @Override
     public boolean equals(Object o) {

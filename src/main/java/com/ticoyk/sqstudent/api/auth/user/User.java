@@ -2,10 +2,12 @@ package com.ticoyk.sqstudent.api.auth.user;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ticoyk.sqstudent.api.app.question.Question;
 import com.ticoyk.sqstudent.api.auth.user.attributes.Authority;
 import com.ticoyk.sqstudent.api.auth.user.attributes.title.Title;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
@@ -24,7 +26,7 @@ public class User {
 
     private Authority authority = Authority.APPUSER;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Title title;
 
     public User() {}

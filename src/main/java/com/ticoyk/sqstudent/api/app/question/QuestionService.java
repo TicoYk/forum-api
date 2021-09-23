@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 public interface QuestionService {
 
     Question saveQuestion(QuestionDTO question, Authentication authentication);
+    Question updateQuestion(Long id, QuestionDTO question);
     PageDTO<Question> findAll(Pageable pageable);
     Question findQuestionById(Long id);
 
