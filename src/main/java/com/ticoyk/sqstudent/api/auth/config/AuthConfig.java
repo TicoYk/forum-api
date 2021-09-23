@@ -45,8 +45,13 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
         authFilter.setFilterProcessesUrl("/login");
         http.cors();
         http.csrf().disable();
+        http.headers().frameOptions().sameOrigin();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/login","/auth/refreshToken", "/auth/register").permitAll();
+        http.authorizeRequests().antMatchers(
+                "/login/**",
+                "/auth/refreshToken/**",
+                "/auth/register/**",
+                "/h2-console/**").permitAll();
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(authFilter);
         http.addFilterBefore(new AppAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
