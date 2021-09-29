@@ -41,12 +41,13 @@ public class QuestionController {
         return ResponseEntity.ok(removedQuestion);
     }
 
-//    @PutMapping({"/{id}"})
-//    public ResponseEntity<Question> updateQuestion(@PathVariable Long id, @RequestBody @Valid QuestionDTO questionDTO) {
-//        Question createdQuestion = this.questionService.updateQuestion(id, questionDTO);
-//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/").toUriString());
-//        return ResponseEntity.created(uri).body(createdQuestion);
-//    }
+    @PutMapping({"/{id}"})
+    public ResponseEntity<Question> updateQuestion(@PathVariable Long id,
+                                                   @RequestBody @Valid QuestionDTO questionDTO, Authentication authentication) {
+        Question createdQuestion = this.questionService.updateQuestion(id, questionDTO, authentication);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/").toUriString());
+        return ResponseEntity.created(uri).body(createdQuestion);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Question> findQuestionById(@PathVariable Long id) {
@@ -69,10 +70,17 @@ public class QuestionController {
         return ResponseEntity.ok(this.questionService.findAllQuestionComments(id, paging));
     }
 
-    @DeleteMapping("/comment/{id}")
-    public ResponseEntity<Comment> addComment(@PathVariable Long id, Authentication authentication) {
+    @DeleteMapping("/comments/{id}")
+    public ResponseEntity<Comment> removeComment(@PathVariable Long id, Authentication authentication) {
         Comment removedComment = this.questionService.removeComment(id, authentication);
         return ResponseEntity.ok(removedComment);
+    }
+
+    @PutMapping("/comments/{id}")
+    public ResponseEntity<Comment> updateComment(@PathVariable Long id,
+                                                 @RequestBody @Valid CommentDTO commentDTO, Authentication authentication) {
+        Comment updatedcomment = this.questionService.updateComment(id, commentDTO, authentication);
+        return ResponseEntity.ok(updatedcomment);
     }
 
 }

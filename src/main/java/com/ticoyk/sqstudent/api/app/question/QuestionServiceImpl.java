@@ -44,8 +44,9 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Question updateQuestion(Long id, QuestionDTO questionDTO) {
+    public Question updateQuestion(Long id, QuestionDTO questionDTO, Authentication authentication) {
         Question question = this.findQuestionById(id);
+        this.validateIfCanChangeQuestion(authentication, question);
         question.setTitle(questionDTO.getTitle());
         question.setDescription(questionDTO.getDescription());
         if(questionDTO.getCategoryId() != null) {
@@ -58,13 +59,8 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Question removeQuestion(Long commentId, Authentication authentication) {
-        Optional<Question> optionalQuestion = this.questionRepository.findById(commentId);
-        if (optionalQuestion.isEmpty()) {
-            throw new ContentNotFoundException("Question with id " + commentId+ " not Found!");
-        }
-        Question question = optionalQuestion.get();
-        this.validateIfCanRemoveQuestion(authentication, question);
-
+        Question question = this.findQuestionById(commentId);
+        this.validateIfCanChangeQuestion(authentication, question);
         this.questionRepository.delete(question);
         return question;
     }
@@ -80,7 +76,7 @@ public class QuestionServiceImpl implements QuestionService {
         if (optionalQuestion.isPresent()) {
             return optionalQuestion.get();
         }
-        throw new ContentNotFoundException(questionUtil.createContentNotFoundException(id));
+        throw new ContentNotFoundException(questionUtil.createQuestionNotFoundException(id));
     }
 
     @Override
@@ -101,7 +97,7 @@ public class QuestionServiceImpl implements QuestionService {
             throw new ContentNotFoundException("Comment with id " + commentId+ " not Found!");
         }
         Comment comment = optionalComment.get();
-        this.validateIfCanRemoveComment(authentication, comment);
+        this.validateIfCanChangeComment(authentication, comment);
 
         this.commentRepository.delete(comment);
         return comment;
@@ -112,7 +108,23 @@ public class QuestionServiceImpl implements QuestionService {
         return new PageDTO<>(commentRepository.findAllByQuestionId(questionId, pageable));
     }
 
-    private void validateIfCanRemoveQuestion(Authentication authentication, Question question) {
+    @Override
+    public Comment updateComment(Long id, CommentDTO commentDTO, Authentication authentication) {
+        Comment comment = this.findCommentById(id);
+        comment.setComment(commentDTO.getComment());
+        this.validateIfCanChangeComment(authentication, comment);
+        return comment;
+    }
+
+    private Comment findCommentById(Long id) {
+        Optional<Comment> optionalComment = this.commentRepository.findById(id);
+        if (optionalComment.isPresent()) {
+            return optionalComment.get();
+        }
+        throw new ContentNotFoundException(questionUtil.createCommentNotFoundException(id));
+    }
+
+    private void validateIfCanChangeQuestion(Authentication authentication, Question question) {
         User user = this.userService.getUser(authentication.getName());
         if (question.getUser().equals(user)) {
             return;
@@ -120,7 +132,7 @@ public class QuestionServiceImpl implements QuestionService {
         this.authUtil.isUserAllowed(List.of(Authority.APPUSER), user);
     }
 
-    private void validateIfCanRemoveComment(Authentication authentication, Comment comment) {
+    private void validateIfCanChangeComment(Authentication authentication, Comment comment) {
         User user = this.userService.getUser(authentication.getName());
         if (comment.getUser().equals(user)) {
             return;
