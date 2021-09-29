@@ -33,6 +33,12 @@ public class ExceptionHelper extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ExceptionRequestDTO(exception), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = { AuthorizationException.class })
+    protected ResponseEntity<Object> handleMethodAuthorizationException(AuthorizationException exception) {
+        logger.error(exception.getMessage());
+        return new ResponseEntity<>(new ExceptionRequestDTO(exception), HttpStatus.UNAUTHORIZED);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         List<String> errors = ex.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList());

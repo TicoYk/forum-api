@@ -1,29 +1,30 @@
 package com.ticoyk.sqstudent.api.auth.user;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ticoyk.sqstudent.api.app.question.Question;
 import com.ticoyk.sqstudent.api.auth.user.attributes.Authority;
 import com.ticoyk.sqstudent.api.auth.user.attributes.title.Title;
 
 import javax.persistence.*;
-import java.util.List;
-
 
 @Entity
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
     private String name;
 
     @Column(unique = true)
+    @JsonIgnore
     private String username;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @JsonIgnore
     private Authority authority = Authority.APPUSER;
 
     @ManyToOne(fetch = FetchType.EAGER)

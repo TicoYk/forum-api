@@ -21,6 +21,8 @@ public class Question {
     private Long id;
 
     private String title;
+
+    @Column(columnDefinition="TEXT")
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
