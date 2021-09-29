@@ -21,6 +21,12 @@ public class QuestionController {
 
     private QuestionService questionService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Question> findQuestionById(@PathVariable Long id) {
+        Question question = this.questionService.findQuestionById(id);
+        return ResponseEntity.ok(question);
+    }
+
     @GetMapping
     public ResponseEntity<PageDTO<Question>> getQuestions(@RequestParam(defaultValue = "0") int page,
                                                           @RequestParam(defaultValue = "3") int size) {
@@ -35,12 +41,6 @@ public class QuestionController {
         return ResponseEntity.created(uri).body(createdQuestion);
     }
 
-    @DeleteMapping("{/id}")
-    public ResponseEntity<Question> removeQuestion(@PathVariable Long id, Authentication authentication) {
-        Question removedQuestion = this.questionService.removeQuestion(id, authentication);
-        return ResponseEntity.ok(removedQuestion);
-    }
-
     @PutMapping({"/{id}"})
     public ResponseEntity<Question> updateQuestion(@PathVariable Long id,
                                                    @RequestBody @Valid QuestionDTO questionDTO, Authentication authentication) {
@@ -49,10 +49,17 @@ public class QuestionController {
         return ResponseEntity.created(uri).body(createdQuestion);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Question> findQuestionById(@PathVariable Long id) {
-        Question question = this.questionService.findQuestionById(id);
-        return ResponseEntity.ok(question);
+    @DeleteMapping("{/id}")
+    public ResponseEntity<Question> removeQuestion(@PathVariable Long id, Authentication authentication) {
+        Question removedQuestion = this.questionService.removeQuestion(id, authentication);
+        return ResponseEntity.ok(removedQuestion);
+    }
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<PageDTO<Comment>> getQuestionComments( @PathVariable Long id,
+                                                                 @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) {
+        Pageable paging = PageRequest.of(page, size);
+        return ResponseEntity.ok(this.questionService.findAllQuestionComments(id, paging));
     }
 
     @PostMapping("/{id}/comments")
@@ -63,19 +70,6 @@ public class QuestionController {
         return ResponseEntity.created(uri).body(createdComment);
     }
 
-    @GetMapping("/{id}/comments")
-    public ResponseEntity<PageDTO<Comment>> getQuestionComments( @PathVariable Long id,
-            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) {
-        Pageable paging = PageRequest.of(page, size);
-        return ResponseEntity.ok(this.questionService.findAllQuestionComments(id, paging));
-    }
-
-    @DeleteMapping("/comments/{id}")
-    public ResponseEntity<Comment> removeComment(@PathVariable Long id, Authentication authentication) {
-        Comment removedComment = this.questionService.removeComment(id, authentication);
-        return ResponseEntity.ok(removedComment);
-    }
-
     @PutMapping("/comments/{id}")
     public ResponseEntity<Comment> updateComment(@PathVariable Long id,
                                                  @RequestBody @Valid CommentDTO commentDTO, Authentication authentication) {
@@ -83,4 +77,10 @@ public class QuestionController {
         return ResponseEntity.ok(updatedcomment);
     }
 
+    @DeleteMapping("/comments/{id}")
+    public ResponseEntity<Comment> removeComment(@PathVariable Long id, Authentication authentication) {
+        Comment removedComment = this.questionService.removeComment(id, authentication);
+        return ResponseEntity.ok(removedComment);
+    }
+    
 }
