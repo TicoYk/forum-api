@@ -82,5 +82,5 @@ public class QuestionController {
         Comment removedComment = this.questionService.removeComment(id, authentication);
         return ResponseEntity.ok(removedComment);
     }
-    
+
 }
