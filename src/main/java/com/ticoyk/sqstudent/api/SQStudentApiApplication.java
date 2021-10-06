@@ -1,14 +1,13 @@
 package com.ticoyk.sqstudent.api;
 
-import com.ticoyk.sqstudent.api.auth.user.attributes.Authority;
 import com.ticoyk.sqstudent.api.auth.user.User;
+import com.ticoyk.sqstudent.api.auth.user.UserService;
+import com.ticoyk.sqstudent.api.auth.user.attributes.Authority;
 import com.ticoyk.sqstudent.api.auth.user.dto.UserDTO;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import com.ticoyk.sqstudent.api.auth.user.UserService;
 
 @SpringBootApplication
 public class SQStudentApiApplication {

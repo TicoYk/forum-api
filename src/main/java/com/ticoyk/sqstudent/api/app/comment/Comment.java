@@ -3,18 +3,15 @@ package com.ticoyk.sqstudent.api.app.comment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ticoyk.sqstudent.api.app.question.Question;
 import com.ticoyk.sqstudent.api.auth.user.User;
-import lombok.*;
-import org.hibernate.Hibernate;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.Objects;
 
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Getter
-@Setter
-@ToString
 public class Comment {
 
     @Id
@@ -33,17 +30,36 @@ public class Comment {
     @ToString.Exclude
     private Question question;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Comment that = (Comment) o;
-        return Objects.equals(id, that.id);
+    public Long getId() {
+        return id;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, comment, user, question);
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
 }

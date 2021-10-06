@@ -1,5 +1,7 @@
 package com.ticoyk.sqstudent.api.app.category;
 
+import com.ticoyk.sqstudent.api.app.category.dto.CategoryDTO;
+import com.ticoyk.sqstudent.api.app.category.dto.CategoryFormDTO;
 import com.ticoyk.sqstudent.api.app.dto.PageDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -21,8 +23,8 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<PageDTO<Category>> getQuestions(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "3") int size) {
+    public ResponseEntity<PageDTO<CategoryDTO, Category>> getQuestions(@RequestParam(defaultValue = "0") int page,
+                                                                      @RequestParam(defaultValue = "3") int size) {
         Pageable paging = PageRequest.of(page, size);
         return ResponseEntity.ok(this.categoryService.findAll(paging));
     }
@@ -34,8 +36,8 @@ public class CategoryController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('admin') or hasAuthority('manager')")
-    public ResponseEntity<Category> saveCategory(@RequestBody @Valid CategoryDTO categoryDTO) {
-        Category category = this.categoryService.saveCategory(categoryDTO);
+    public ResponseEntity<Category> saveCategory(@RequestBody @Valid CategoryFormDTO categoryFormDTO) {
+        Category category = this.categoryService.saveCategory(categoryFormDTO);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/" + category.getId()).toUriString());
         return ResponseEntity.created(uri).body(category);
     }

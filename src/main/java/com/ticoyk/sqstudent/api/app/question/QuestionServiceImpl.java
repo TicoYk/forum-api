@@ -2,9 +2,13 @@ package com.ticoyk.sqstudent.api.app.question;
 
 import com.ticoyk.sqstudent.api.app.category.CategoryService;
 import com.ticoyk.sqstudent.api.app.comment.Comment;
-import com.ticoyk.sqstudent.api.app.comment.CommentDTO;
+import com.ticoyk.sqstudent.api.app.comment.CommentConverter;
+import com.ticoyk.sqstudent.api.app.comment.dto.CommentDTO;
+import com.ticoyk.sqstudent.api.app.comment.dto.CommentFormDTO;
 import com.ticoyk.sqstudent.api.app.comment.CommentRepository;
 import com.ticoyk.sqstudent.api.app.dto.PageDTO;
+import com.ticoyk.sqstudent.api.app.question.dto.QuestionDTO;
+import com.ticoyk.sqstudent.api.app.question.dto.QuestionFormDTO;
 import com.ticoyk.sqstudent.api.auth.config.util.AuthUtil;
 import com.ticoyk.sqstudent.api.auth.user.User;
 import com.ticoyk.sqstudent.api.auth.user.UserService;
@@ -27,60 +31,66 @@ public class QuestionServiceImpl implements QuestionService {
     private CategoryService categoryService;
     private QuestionRepository questionRepository;
     private CommentRepository commentRepository;
-    private QuestionUtil questionUtil;
+    private QuestionMSG questionMSG;
+    private QuestionConverter questionConverter;
+    private CommentConverter commentConverter;
     private AuthUtil authUtil;
 
-    @Override
-    public Question saveQuestion(QuestionDTO questionDTO, Authentication authentication) {
-        User user = this.userService.getUser(authentication.getName());
-        Question question = new Question();
-        question.setTitle(questionDTO.getTitle());
-        question.setDescription(questionDTO.getDescription());
-        if(questionDTO.getCategoryId() != null) {
-            question.setCategory(this.categoryService.findCategoryById(questionDTO.getCategoryId()));
-        }
-        question.setUser(user);
-        return questionRepository.save(question);
-    }
-
-    @Override
-    public Question updateQuestion(Long id, QuestionDTO questionDTO, Authentication authentication) {
-        Question question = this.findQuestionById(id);
-        this.validateIfCanChangeQuestion(authentication, question);
-        question.setTitle(questionDTO.getTitle());
-        question.setDescription(questionDTO.getDescription());
-        if(questionDTO.getCategoryId() != null) {
-            question.setCategory(this.categoryService.findCategoryById(questionDTO.getCategoryId()));
-        } else {
-            question.setCategory(null);
-        }
-        return questionRepository.save(question);
-    }
-
-    @Override
-    public Question removeQuestion(Long commentId, Authentication authentication) {
-        Question question = this.findQuestionById(commentId);
-        this.validateIfCanChangeQuestion(authentication, question);
-        this.questionRepository.delete(question);
-        return question;
-    }
-
-    @Override
-    public PageDTO<Question> findAll(Pageable pageable) {
-        return new PageDTO<>(questionRepository.findAll(pageable));
-    }
-
-    @Transactional
-    public Question findQuestionById(Long id) {
-        Optional<Question> optionalQuestion = this.questionRepository.findById(id);
+    public Question findQuestionById(Long questionId) {
+        Optional<Question> optionalQuestion = this.questionRepository.findById(questionId);
         if (optionalQuestion.isPresent()) {
             return optionalQuestion.get();
         }
-        throw new ContentNotFoundException(questionUtil.createQuestionNotFoundException(id));
+        throw new ContentNotFoundException(this.questionMSG.createQuestionNotFoundException(questionId));
     }
 
     @Override
-    public Comment addComment(Long questionId, CommentDTO commentDTO, Authentication authentication) {
+    public QuestionDTO saveQuestion(QuestionFormDTO questionFormDTO, Authentication authentication) {
+        User user = this.userService.getUser(authentication.getName());
+        Question question = new Question();
+        question.setTitle(questionFormDTO.getTitle());
+        question.setDescription(questionFormDTO.getDescription());
+        if(questionFormDTO.getCategoryId() != null) {
+            question.setCategory(this.categoryService.findCategoryById(questionFormDTO.getCategoryId()));
+        }
+        question.setUser(user);
+        return this.questionConverter.convertQuestionToDTO(this.questionRepository.save(question));
+    }
+
+    @Override
+    public QuestionDTO updateQuestion(Long id, QuestionFormDTO questionFormDTO, Authentication authentication) {
+        Question question = this.findQuestionById(id);
+        this.validateIfCanChangeQuestion(authentication, question);
+        question.setTitle(questionFormDTO.getTitle());
+        question.setDescription(questionFormDTO.getDescription());
+        if(questionFormDTO.getCategoryId() != null) {
+            question.setCategory(this.categoryService.findCategoryById(questionFormDTO.getCategoryId()));
+        } else {
+            question.setCategory(null);
+        }
+        return this.questionConverter.convertQuestionToDTO(this.questionRepository.save(question));
+    }
+
+    @Override
+    public QuestionDTO removeQuestion(Long questionId, Authentication authentication) {
+        Question question = this.findQuestionById(questionId);
+        this.validateIfCanChangeQuestion(authentication, question);
+        this.questionRepository.delete(question);
+        return this.questionConverter.convertQuestionToDTO(question);
+    }
+
+    @Override
+    public PageDTO<QuestionDTO, Question> findAll(Pageable pageable) {
+        return this.questionConverter.convertToPageQuestionDTO(questionRepository.findAll(pageable));
+    }
+
+    @Transactional
+    public QuestionDTO findQuestionDTOById(Long questionId) {
+        return this.questionConverter.convertQuestionToDTO(this.findQuestionById(questionId));
+    }
+
+    @Override
+    public Comment addComment(Long questionId, CommentFormDTO commentDTO, Authentication authentication) {
         User user = this.userService.getUser(authentication.getName());
         Question question = this.findQuestionById(questionId);
         Comment comment = new Comment();
@@ -104,12 +114,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public PageDTO<Comment> findAllQuestionComments(Long questionId, Pageable pageable) {
-        return new PageDTO<>(commentRepository.findAllByQuestionId(questionId, pageable));
+    public PageDTO<CommentDTO, Comment> findAllQuestionComments(Long questionId, Pageable pageable) {
+        return this.commentConverter.convertToPageCommentDTO(this.commentRepository.findAllByQuestionId(questionId, pageable));
     }
 
     @Override
-    public Comment updateComment(Long id, CommentDTO commentDTO, Authentication authentication) {
+    public Comment updateComment(Long id, CommentFormDTO commentDTO, Authentication authentication) {
         Comment comment = this.findCommentById(id);
         comment.setComment(commentDTO.getComment());
         this.validateIfCanChangeComment(authentication, comment);
@@ -121,7 +131,7 @@ public class QuestionServiceImpl implements QuestionService {
         if (optionalComment.isPresent()) {
             return optionalComment.get();
         }
-        throw new ContentNotFoundException(questionUtil.createCommentNotFoundException(id));
+        throw new ContentNotFoundException(this.questionMSG.createCommentNotFoundException(id));
     }
 
     private void validateIfCanChangeQuestion(Authentication authentication, Question question) {

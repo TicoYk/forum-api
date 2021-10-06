@@ -1,4 +1,4 @@
-package com.ticoyk.sqstudent.api.app.comment;
+package com.ticoyk.sqstudent.api.app.comment.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CommentDTO {
+public class CommentFormDTO {
 
     @NotBlank(message = "Comment is required")
     @Size(max=200, message = "Text size should be between 0 and 200")

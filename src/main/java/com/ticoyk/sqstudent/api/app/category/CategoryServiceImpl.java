@@ -1,9 +1,10 @@
 package com.ticoyk.sqstudent.api.app.category;
 
+import com.ticoyk.sqstudent.api.app.category.dto.CategoryDTO;
+import com.ticoyk.sqstudent.api.app.category.dto.CategoryFormDTO;
 import com.ticoyk.sqstudent.api.app.dto.PageDTO;
 import com.ticoyk.sqstudent.api.exception.ContentNotFoundException;
 
-import org.hibernate.Hibernate;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +16,20 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
+    private CategoryConverter categoryConverter;
     private CategoryRepository categoryRepository;
-    private CategoryUtil categoryUtil;
+    private CategoryMSG categoryMSG;
 
     @Override
-    public Category saveCategory(CategoryDTO categoryDTO) {
+    public Category saveCategory(CategoryFormDTO categoryFormDTO) {
         Category newCategory = new Category();
-        newCategory.setName(categoryDTO.getName());
+        newCategory.setName(categoryFormDTO.getName());
         return this.categoryRepository.save(newCategory);
     }
 
     @Override
-    public PageDTO<Category> findAll(Pageable pageable) {
-        return new PageDTO<>(categoryRepository.findAll(pageable));
+    public PageDTO<CategoryDTO, Category> findAll(Pageable pageable) {
+        return this.categoryConverter.convertToPageCategoryDTO(this.categoryRepository.findAll(pageable));
     }
 
     @Override
@@ -36,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (optionalCategory.isPresent()) {
             return optionalCategory.get();
         }
-        throw new ContentNotFoundException(categoryUtil.createContentNotFoundException("id", id.toString()));
+        throw new ContentNotFoundException(categoryMSG.createContentNotFoundException("id", id.toString()));
     }
 
 }

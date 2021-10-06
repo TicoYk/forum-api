@@ -1,10 +1,12 @@
 package com.ticoyk.sqstudent.api.auth.config.filter;
 
 
+import com.auth0.jwt.JWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.ticoyk.sqstudent.api.auth.config.AuthExceptionHandler;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.ticoyk.sqstudent.api.auth.config.dto.LoginFormDTO;
+import com.ticoyk.sqstudent.api.auth.config.util.AuthUtil;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,15 +20,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.auth0.jwt.JWT;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ticoyk.sqstudent.api.auth.config.util.AuthUtil;
 
 public class AppAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -46,7 +43,7 @@ public class AppAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String password = "";
         if (request.getContentType().equals(MediaType.APPLICATION_JSON_VALUE)) {
             try {
-                LoginForm form = this.extractJsonUser(request);
+                LoginFormDTO form = this.extractJsonUser(request);
                 username = form.getUsername();
                 password = form.getPassword();
             } catch(Exception exception) {
@@ -80,7 +77,7 @@ public class AppAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .sign(authUtil.algorithm());
         String refreshToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(authUtil.jwtTimeToLive())
+                .withExpiresAt(authUtil.jwtTimeToLive() )
                 .withIssuer(request.getRequestURL().toString())
                 .sign(authUtil.algorithm());
         Map<String, String> tokens = new HashMap<>();
@@ -90,20 +87,12 @@ public class AppAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 
-    public LoginForm extractJsonUser(HttpServletRequest request) throws Exception {
+    public LoginFormDTO extractJsonUser(HttpServletRequest request) throws Exception {
         String body = IOUtils.toString(request.getReader());
-        LoginForm form = new Gson().fromJson(body, LoginForm.class);
+        LoginFormDTO form = new Gson().fromJson(body, LoginFormDTO.class);
         if (form.getUsername() != null && form.getPassword() != null) {
             return form;
         }
         throw new Exception("Username and Password couldn't be parsed");
     }
-
-    @Data
-    @AllArgsConstructor
-    protected static class LoginForm {
-        private String username;
-        private String password;
-    }
-
 }

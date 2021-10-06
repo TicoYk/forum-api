@@ -1,4 +1,4 @@
-package com.ticoyk.sqstudent.api.app.question;
+package com.ticoyk.sqstudent.api.app.question.dto;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 
 @Data
-public class QuestionDTO {
+public class QuestionFormDTO {
 
     @NotBlank(message = "Title is required")
     private String title;

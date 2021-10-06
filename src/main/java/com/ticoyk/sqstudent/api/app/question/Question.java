@@ -2,16 +2,15 @@ package com.ticoyk.sqstudent.api.app.question;
 
 import com.ticoyk.sqstudent.api.app.category.Category;
 import com.ticoyk.sqstudent.api.auth.user.User;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Getter
-@Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Question {
@@ -43,9 +42,44 @@ public class Question {
         return Objects.equals(id, question.id);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, description);
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
 }
