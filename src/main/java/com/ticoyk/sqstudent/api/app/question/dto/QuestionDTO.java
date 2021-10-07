@@ -17,5 +17,6 @@ public class QuestionDTO {
     private String description;
     private AuthorDTO author;
     private CategoryDTO category;
+    private String createdAt;
 
 }

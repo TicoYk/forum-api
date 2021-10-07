@@ -6,8 +6,10 @@ import com.ticoyk.sqstudent.api.auth.user.User;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @AllArgsConstructor
@@ -29,6 +31,10 @@ public class Comment {
     @JsonIgnore
     @ToString.Exclude
     private Question question;
+
+    @Column(updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -60,6 +66,14 @@ public class Comment {
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
 }

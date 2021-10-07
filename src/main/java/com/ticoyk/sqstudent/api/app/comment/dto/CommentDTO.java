@@ -13,5 +13,6 @@ public class CommentDTO {
     private Long id;
     private String comment;
     private AuthorDTO author;
+    private String createdAt;
 
 }
