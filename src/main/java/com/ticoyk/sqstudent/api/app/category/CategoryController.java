@@ -30,16 +30,16 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> findCategoryById(@PathVariable Long id) {
-        return ResponseEntity.ok(this.categoryService.findCategoryById(id));
+    public ResponseEntity<CategoryDTO> findCategoryById(@PathVariable Long id) {
+        return ResponseEntity.ok(this.categoryService.findCategoryDTOById(id));
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('admin') or hasAuthority('manager')")
-    public ResponseEntity<Category> saveCategory(@RequestBody @Valid CategoryFormDTO categoryFormDTO) {
-        Category category = this.categoryService.saveCategory(categoryFormDTO);
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/" + category.getId()).toUriString());
-        return ResponseEntity.created(uri).body(category);
+    public ResponseEntity<CategoryDTO> saveCategory(@RequestBody @Valid CategoryFormDTO categoryFormDTO) {
+        CategoryDTO categoryDTO = this.categoryService.saveCategory(categoryFormDTO);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/" + categoryDTO.getId()).toUriString());
+        return ResponseEntity.created(uri).body(categoryDTO);
     }
 
 }

@@ -20,11 +20,11 @@ public class Comment {
 
     private String comment;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="question_id", referencedColumnName="id", nullable = false)
     @JsonIgnore
     @ToString.Exclude
