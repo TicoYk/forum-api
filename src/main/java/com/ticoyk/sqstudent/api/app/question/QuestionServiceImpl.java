@@ -1,5 +1,6 @@
 package com.ticoyk.sqstudent.api.app.question;
 
+import com.ticoyk.sqstudent.api.app.category.Category;
 import com.ticoyk.sqstudent.api.app.category.CategoryService;
 import com.ticoyk.sqstudent.api.app.dto.PageDTO;
 import com.ticoyk.sqstudent.api.app.question.dto.QuestionDTO;
@@ -10,7 +11,10 @@ import com.ticoyk.sqstudent.api.auth.user.UserService;
 import com.ticoyk.sqstudent.api.auth.user.attributes.Authority;
 import com.ticoyk.sqstudent.api.exception.ContentNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +45,20 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public QuestionDTO findQuestionDTOById(Long questionId) {
         return this.questionConverter.convertQuestionToDTO(this.findQuestionById(questionId));
+    }
+
+    @Override
+    public PageDTO<QuestionDTO, Question> findAll(int size, int page) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return this.questionConverter.convertToPageQuestionDTO(this.questionRepository.findAll(pageable));
+    }
+
+    @Override
+    public PageDTO<QuestionDTO, Question> findAllByCategory(int size, int page, Long categoryId) {
+        Category category = this.categoryService.findCategoryById(categoryId);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Question> questionsPage = this.questionRepository.findAllByCategory(pageable, category);
+        return this.questionConverter.convertToPageQuestionDTO(questionsPage);
     }
 
     @Override
@@ -76,11 +94,6 @@ public class QuestionServiceImpl implements QuestionService {
         this.validateIfCanChangeQuestion(authentication, question);
         this.questionRepository.delete(question);
         return this.questionConverter.convertQuestionToDTO(question);
-    }
-
-    @Override
-    public PageDTO<QuestionDTO, Question> findAll(Pageable pageable) {
-        return this.questionConverter.convertToPageQuestionDTO(questionRepository.findAll(pageable));
     }
 
     private void validateIfCanChangeQuestion(Authentication authentication, Question question) {

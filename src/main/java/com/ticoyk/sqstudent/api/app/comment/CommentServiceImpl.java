@@ -11,7 +11,9 @@ import com.ticoyk.sqstudent.api.auth.user.UserService;
 import com.ticoyk.sqstudent.api.auth.user.attributes.Authority;
 import com.ticoyk.sqstudent.api.exception.ContentNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -68,7 +70,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public PageDTO<CommentDTO, Comment> findAllQuestionComments(Long questionId, Pageable pageable) {
+    public PageDTO<CommentDTO, Comment> findAllQuestionComments(int page, int size, Long questionId) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
         return this.commentConverter.convertToPageCommentDTO(this.commentRepository.findAllByQuestionId(questionId, pageable));
     }
 

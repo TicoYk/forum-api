@@ -4,8 +4,6 @@ import com.ticoyk.sqstudent.api.app.dto.PageDTO;
 import com.ticoyk.sqstudent.api.app.question.dto.QuestionDTO;
 import com.ticoyk.sqstudent.api.app.question.dto.QuestionFormDTO;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +28,13 @@ public class QuestionController {
     @GetMapping
     public ResponseEntity< PageDTO<QuestionDTO, Question>> getQuestions(@RequestParam(defaultValue = "0") int page,
                                                           @RequestParam(defaultValue = "3") int size) {
-        Pageable paging = PageRequest.of(page, size);
-        return ResponseEntity.ok(this.questionService.findAll(paging));
+        return ResponseEntity.ok(this.questionService.findAll(page, size));
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity< PageDTO<QuestionDTO, Question>> getQuestionsByCategory(@RequestParam(defaultValue = "0") int page,
+                                                                        @RequestParam(defaultValue = "3") int size, @PathVariable Long categoryId) {
+        return ResponseEntity.ok(this.questionService.findAllByCategory(page, size, categoryId));
     }
 
     @PostMapping
