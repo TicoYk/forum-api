@@ -11,7 +11,7 @@ public interface QuestionService {
     Question findQuestionById(Long id);
     QuestionDTO findQuestionDTOById(Long id);
     PageDTO<QuestionDTO, Question> findAll(int page, int size);
-    PageDTO<QuestionDTO, Question> findAllByCategory(int size, int page, Long categoryId);
+    PageDTO<QuestionDTO, Question> findAllByCategory(int page, int size, Long categoryId);
     QuestionDTO saveQuestion(QuestionFormDTO question, Authentication authentication);
     QuestionDTO updateQuestion(Long id, QuestionFormDTO question, Authentication authentication);
     QuestionDTO removeQuestion(Long id, Authentication authentication);

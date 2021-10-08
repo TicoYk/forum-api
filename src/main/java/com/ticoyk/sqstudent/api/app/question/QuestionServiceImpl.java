@@ -48,13 +48,13 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public PageDTO<QuestionDTO, Question> findAll(int size, int page) {
+    public PageDTO<QuestionDTO, Question> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return this.questionConverter.convertToPageQuestionDTO(this.questionRepository.findAll(pageable));
     }
 
     @Override
-    public PageDTO<QuestionDTO, Question> findAllByCategory(int size, int page, Long categoryId) {
+    public PageDTO<QuestionDTO, Question> findAllByCategory(int page, int size, Long categoryId) {
         Category category = this.categoryService.findCategoryById(categoryId);
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Question> questionsPage = this.questionRepository.findAllByCategory(pageable, category);
