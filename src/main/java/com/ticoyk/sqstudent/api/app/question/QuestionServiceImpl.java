@@ -54,6 +54,13 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public PageDTO<QuestionDTO, Question> findAllByUserId(int page, int size, Long userId) {
+        User user = this.userService.findUserById(userId);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return this.questionConverter.convertToPageQuestionDTO(this.questionRepository.findAllByUser(pageable, user));
+    }
+
+    @Override
     public PageDTO<QuestionDTO, Question> findAllByCategory(int page, int size, Long categoryId) {
         Category category = this.categoryService.findCategoryById(categoryId);
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
@@ -67,6 +74,7 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = new Question();
         question.setTitle(questionFormDTO.getTitle());
         question.setDescription(questionFormDTO.getDescription());
+        question.setIsChallenge(questionFormDTO.getIsChallenge());
         if(questionFormDTO.getCategoryId() != null) {
             question.setCategory(this.categoryService.findCategoryById(questionFormDTO.getCategoryId()));
         }

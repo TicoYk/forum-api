@@ -15,6 +15,8 @@ public class QuestionDTO {
     private Long id;
     private String title;
     private String description;
+    private Boolean isChallenge;
+    private Long commentsCount;
     private AuthorDTO author;
     private CategoryDTO category;
     private String createdAt;

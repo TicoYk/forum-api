@@ -1,6 +1,5 @@
 package com.ticoyk.sqstudent.api.app.comment;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ticoyk.sqstudent.api.app.question.Question;
 import com.ticoyk.sqstudent.api.auth.user.User;
 import lombok.AllArgsConstructor;
@@ -27,8 +26,7 @@ public class Comment {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="question_id", referencedColumnName="id", nullable = false)
-    @JsonIgnore
+    @JoinColumn(name="question_id", referencedColumnName="id")
     @ToString.Exclude
     private Question question;
 

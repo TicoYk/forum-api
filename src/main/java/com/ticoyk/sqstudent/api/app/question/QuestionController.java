@@ -31,6 +31,12 @@ public class QuestionController {
         return ResponseEntity.ok(this.questionService.findAll(page, size));
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity< PageDTO<QuestionDTO, Question>> getQuestionsByUserId(@RequestParam(defaultValue = "0") int page,
+                                                                        @RequestParam(defaultValue = "3") int size, @PathVariable Long userId) {
+        return ResponseEntity.ok(this.questionService.findAllByUserId(page, size, userId));
+    }
+
     @GetMapping("/category/{categoryId}")
     public ResponseEntity< PageDTO<QuestionDTO, Question>> getQuestionsByCategory(@RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "3") int size, @PathVariable Long categoryId) {
