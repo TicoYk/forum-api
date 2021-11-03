@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,6 +29,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         this.userRepository = userRepository;
         this.titleService = titleService;
         this.util = util;
+    }
+
+    @Override
+    public User findUserById(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+         if (optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return optionalUser.get();
     }
 
     @Override
