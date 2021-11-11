@@ -54,6 +54,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public PageDTO<QuestionDTO, Question> findAllByIsChallenge(int page, int size, boolean isChallenge) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return this.questionConverter.convertToPageQuestionDTO(this.questionRepository.findAllByIsChallenge(pageable, isChallenge));
+    }
+
+    @Override
     public PageDTO<QuestionDTO, Question> findAllByUserId(int page, int size, Long userId) {
         User user = this.userService.findUserById(userId);
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
@@ -88,6 +94,7 @@ public class QuestionServiceImpl implements QuestionService {
         this.validateIfCanChangeQuestion(authentication, question);
         question.setTitle(questionFormDTO.getTitle());
         question.setDescription(questionFormDTO.getDescription());
+        question.setIsChallenge(questionFormDTO.getIsChallenge());
         if(questionFormDTO.getCategoryId() != null) {
             question.setCategory(this.categoryService.findCategoryById(questionFormDTO.getCategoryId()));
         } else {

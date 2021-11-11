@@ -31,6 +31,13 @@ public class QuestionController {
         return ResponseEntity.ok(this.questionService.findAll(page, size));
     }
 
+    @GetMapping("/challenge")
+    public ResponseEntity< PageDTO<QuestionDTO, Question>> getQuestionsByChallenge(@RequestParam(defaultValue = "0") int page,
+                                                                        @RequestParam(defaultValue = "3") int size,
+                                                                        @RequestParam(defaultValue = "true") boolean isChallenge) {
+        return ResponseEntity.ok(this.questionService.findAllByIsChallenge(page, size, isChallenge));
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity< PageDTO<QuestionDTO, Question>> getQuestionsByUserId(@RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "3") int size, @PathVariable Long userId) {
@@ -58,7 +65,7 @@ public class QuestionController {
         return ResponseEntity.created(uri).body(createdQuestion);
     }
 
-    @DeleteMapping("{/id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<QuestionDTO> removeQuestion(@PathVariable Long id, Authentication authentication) {
         QuestionDTO removedQuestion = this.questionService.removeQuestion(id, authentication);
         return ResponseEntity.ok(removedQuestion);

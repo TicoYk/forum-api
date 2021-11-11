@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     Page<Question> findAllByUser(Pageable pageable, User user);
     Page<Question> findAllByCategory(Pageable pageable, Category category);
+    Page<Question> findAllByIsChallenge(Pageable pageable, Boolean isChallenge);
 }
